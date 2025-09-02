@@ -114,15 +114,19 @@ IMAP_PASSWORD=your-app-password
 2. Generate an App Password
 3. Use the App Password instead of your regular password
 
-### 4. Start MongoDB
+### 4. Run with Docker Compose (recommended)
 
 ```bash
-# Local MongoDB (if installed)
-mongod
-
-# Or use Docker
-docker run -d -p 27017:27017 --name mongodb mongo:latest
+# Ensure Docker Desktop is running (Windows/macOS)
+docker compose up --build
 ```
+
+Services:
+- MongoDB: `mongodb://admin:password@localhost:27017` (db `email-analyzer`)
+- Backend API: http://localhost:3001
+- Frontend UI: http://localhost:3000
+
+If you see an error like `open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.`, start Docker Desktop and re-run the command.
 
 ### 5. Run the Application
 

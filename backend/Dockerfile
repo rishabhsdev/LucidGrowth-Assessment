@@ -1,22 +1,27 @@
-FROM node:18-alpine
+FROM node:18-alpine AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Install all dependencies (including dev) to build NestJS
 COPY package*.json ./
+RUN npm install
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy source code
+# Copy source and build
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Expose port
+FROM node:18-alpine AS production
+
+WORKDIR /app
+
+# Copy only necessary runtime files
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copy built dist and any runtime assets
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/nest-cli.json ./nest-cli.json
+
 EXPOSE 3001
 
-# Start the application
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main.js"]
